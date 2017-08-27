@@ -1,0 +1,17 @@
+Charging:
+  Setting: true
+  Deleting: true
+  Renaming: true
+  Teleporting: true
+Costs:
+  SetMainHome: 20
+  SetCustomHome: 50
+  DeleteMainHome: 20
+  DeleteCustomHome: 50
+  RenameHome: 100
+  TeleportMainHome: 2
+  TeleportCustomHome: 5
+Messages:
+  CurrencySymbol: "$"
+  NotEnoughMoney: "you need %COST% todo this, you have %BALANCE%"
+  MoneySpent: "you spend %COST% to %ACTION%"

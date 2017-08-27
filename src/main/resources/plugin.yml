@@ -1,0 +1,4 @@
+name: HomeSpawnCost
+version: ${project.version}
+main: net.lapismc.homespawncost.HomeSpawnCost
+depend: [HomeSpawn, Vault]
