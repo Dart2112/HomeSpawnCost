@@ -1,9 +1,6 @@
 package net.lapismc.homespawncost;
 
-import net.lapismc.HomeSpawn.api.events.HomeDeleteEvent;
-import net.lapismc.HomeSpawn.api.events.HomeRenameEvent;
-import net.lapismc.HomeSpawn.api.events.HomeSetEvent;
-import net.lapismc.HomeSpawn.api.events.HomeTeleportEvent;
+import net.lapismc.HomeSpawn.api.events.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 public final class HomeSpawnCost extends JavaPlugin implements Listener {
@@ -22,7 +20,7 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        configs();
         if (!setupEconomy()) {
             logger.severe("Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
@@ -44,15 +42,46 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener {
         return econ != null;
     }
 
+    private void configs() {
+        File config = new File(getDataFolder(), "config.yml");
+        if (config.exists()) {
+            if (getConfig().getInt("ConfigVersion") != 1) {
+                File configBackup = new File(getDataFolder(), "config_backup.yml");
+                config.renameTo(configBackup);
+                logger.info("Config has been updated, Please transfer values");
+                saveDefaultConfig();
+            }
+        } else {
+            saveDefaultConfig();
+        }
+    }
+
     private String getMessage(String key) {
         return ChatColor.translateAlternateColorCodes('&', getConfig().getString(key));
+    }
+
+    @EventHandler
+    public void onHomeMove(HomeMoveEvent e) {
+        if (getConfig().getBoolean("Charging.Moving")) {
+            Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
+            Integer cost = e.getOldHome().getName().equals("Home") ? getConfig().getInt("Costs.MoveMainHome") : getConfig().getInt("Costs.MoveCustomHome");
+            if (balance < cost) {
+                e.setCancelled(true, getMessage("Messages.NotEnoughMoney").replace("%COST%", currencySymbol + cost).replace("%Balance%", currencySymbol + balance));
+            } else {
+                if (econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess()) {
+                    e.getPlayer().sendMessage(getMessage("Messages.MoneySpent").replace("%COST%", currencySymbol + cost).replace("%ACTION%", "move your home"));
+                } else {
+                    e.setCancelled(true, getMessage("Messages.NotEnoughMoney").replace("%COST%", currencySymbol + cost).replace("%Balance%", currencySymbol + balance));
+                }
+            }
+        }
     }
 
     @EventHandler
     public void onHomeSet(HomeSetEvent e) {
         if (getConfig().getBoolean("Charging.Setting")) {
             Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
-            Integer cost = e.getHomeName().equals("Home") ? getConfig().getInt("Costs.SetMainHome") : getConfig().getInt("Costs.SetCustomHome");
+            Integer cost = e.getHome().getName().equals("Home") ? getConfig().getInt("Costs.SetMainHome") : getConfig().getInt("Costs.SetCustomHome");
             if (balance < cost) {
                 e.setCancelled(true, getMessage("Messages.NotEnoughMoney").replace("%COST%", currencySymbol + cost).replace("%Balance%", currencySymbol + balance));
             } else {
