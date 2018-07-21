@@ -1,6 +1,6 @@
 package net.lapismc.homespawncost;
 
-import net.lapismc.HomeSpawn.api.events.*;
+import net.lapismc.homespawn.api.events.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -64,7 +64,7 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener {
     public void onHomeMove(HomeMoveEvent e) {
         if (getConfig().getBoolean("Charging.Moving")) {
             Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
-            Integer cost = e.getOldHome().getName().equals("Home") ? getConfig().getInt("Costs.MoveMainHome") : getConfig().getInt("Costs.MoveCustomHome");
+            Integer cost = e.getName().equals("Home") ? getConfig().getInt("Costs.MoveMainHome") : getConfig().getInt("Costs.MoveCustomHome");
             if (balance < cost) {
                 e.setCancelled(true, getMessage("Messages.NotEnoughMoney").replace("%COST%", currencySymbol + cost).replace("%Balance%", currencySymbol + balance));
             } else {
