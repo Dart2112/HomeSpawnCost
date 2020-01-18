@@ -2,3 +2,7 @@ name: HomeSpawnCost
 version: 1.2.0
 main: net.lapismc.homespawncost.HomeSpawnCost
 depend: [HomeSpawn, Vault]
+commands:
+  hsc-reload:
+    usage: /hsc-reload
+    description: Reloads the plugin
