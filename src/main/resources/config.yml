@@ -12,11 +12,14 @@ cost:
   teleport_home: 2
 messages:
   currency_symbol: "$"
-  not_enough_money: "&cYou need to have at least %cost% to buy this! You have: %balance%"
-  rename_home: "&aYou renamed your home "%old_name%" to "%new_name%" for %cost%!"
-  move_home: "&aYou moved your home "%name%" for %cost%!"
-  set_home: "&aYou created new home "%name%" for %cost%!"
-  delete_home: "&aYou deleted your home "%name%" for %cost%!"
-  teleport_home: "&aYou teleported to your home "%name%" for %cost%!"
-##Do not even try to touch config version! Default value: 2
+  not_enough_money: "&cYou need to have at least $cost$ to buy this! You have: $balance$"
+  rename_home: "&aYou renamed your home $old_name$ to $new_name$ for $cost$!"
+  move_home: "&aYou moved your home $name$ for $cost$!"
+  set_home: "&aYou created new home $name$ for $cost$!"
+  delete_home: "&aYou deleted your home $name$ for $cost$!"
+  teleport_home: "&aYou teleported to your home $name$ for $cost$!"
+  reload: "&aPlugin was successfully reloaded!"
+  reload_error: "&cThere's a error while reloading. Check it in console."
+  reload_many_arg: "&aToo many arguments."
+##Do not even try to touch config_version! Default value: 2
 config_version: 2
