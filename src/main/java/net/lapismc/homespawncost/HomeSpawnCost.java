@@ -28,7 +28,7 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener, Command
         configs();
         if (!setupEconomy()) 
         {
-            logger.severe("We can't find Vault. Install it. Disabling!");
+            logger.severe("Disabled due to no Vault dependency found!");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -56,7 +56,7 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener, Command
         File config = new File(getDataFolder(), "config.yml");
         if (config.exists()) 
         {
-            if (getConfig().getInt("config_version") != 2) 
+            if (getConfig().getInt("config_version") != 3) 
             {
                 File configBackup = new File(getDataFolder(), "config_backup.yml");
                 config.renameTo(configBackup);
@@ -108,16 +108,14 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener, Command
         if (getConfig().getBoolean("use.moving_home")) 
         {
             Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
-            Integer cost = getConfig().getInt("cost.move_home");
-            if (balance < cost) 
+            Integer cost = e.getName().equals("Home") ? getConfig().getInt("cost.move_home") : getConfig().getInt("cost.move_home");
+            if (balance >= cost && econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess()) 
             {
-                e.setCancelled(true, getMessage("messages.not_enough_money").replace("$cost$", currencySymbol + cost).replace("$balance$", currencySymbol + balance));
+                e.getPlayer().sendMessage(getMessage("messages.move_home").replace("%cost%", currencySymbol + cost).replace("%name%", e.getName()));
             }
             else
             {
-                if (econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess()) {
-                    e.getPlayer().sendMessage(getMessage("messages.move_home").replace("$cost$", currencySymbol + cost).replace("$name$", e.getName()));
-                }
+                e.setCancelled(true, getMessage("messages.not_enough_money").replace("%cost%", currencySymbol + cost).replace("%balance%", currencySymbol + balance));
             }
         }
     }
@@ -128,17 +126,14 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener, Command
         if (getConfig().getBoolean("use.setting_home"))
         {
             Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
-            Integer cost = getConfig().getInt("cost.set_home");
-            if (balance < cost)
+            Integer cost = e.getHome().getName().equals("Home") ? getConfig().getInt("cost.set_home") : getConfig().getInt("cost.set_home");
+            if (balance >= cost && econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
             {
-                e.setCancelled(true, getMessage("messages.not_enough_money").replace("$cost$", currencySymbol + cost).replace("$balance$", currencySymbol + balance));
+                e.getPlayer().sendMessage(getMessage("messages.set_home").replace("%cost%", currencySymbol + cost).replace("%home%", e.getHome().getName()));
             }
             else
             {
-                if (econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
-                {
-                    e.getPlayer().sendMessage(getMessage("messages.set_home").replace("$cost$", currencySymbol + cost).replace("$home$", e.getHome().getName()));
-                }
+                e.setCancelled(true, getMessage("messages.not_enough_money").replace("%cost%", currencySymbol + cost).replace("%balance%", currencySymbol + balance));
             }
         }
     }
@@ -149,17 +144,14 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener, Command
         if (getConfig().getBoolean("use.deleting_home"))
         {
             Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
-            Integer cost = getConfig().getInt("cost.deleting_home");
-            if (balance < cost)
+            Integer cost = e.getHome().getName().equals("Home") ? getConfig().getInt("cost.delete_home") : getConfig().getInt("cost.delete_home");
+            if (balance >= cost && econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
             {
-                e.setCancelled(true, getMessage("messages.not_enough_money").replace("$cost$", currencySymbol + cost).replace("$balance$", currencySymbol + balance));
+                e.getPlayer().sendMessage(getMessage("messages.delete_home").replace("%cost%", currencySymbol + cost).replace("%home%", e.getHome().getName()));
             }
             else
             {
-                if (econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
-                {
-                    e.getPlayer().sendMessage(getMessage("messages.delete_home").replace("$cost$", currencySymbol + cost).replace("$home$", e.getHome().getName()));
-                }
+                e.setCancelled(true, getMessage("messages.not_enough_money").replace("%cost%", currencySymbol + cost).replace("%balance%", currencySymbol + balance));
             }
         }
     }
@@ -171,16 +163,13 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener, Command
         {
             Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
             Integer cost = getConfig().getInt("cost.rename_home");
-            if (balance < cost) 
+            if (balance >= cost && econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
             {
-                e.setCancelled(true, getMessage("messages.not_enough_money").replace("$cost$", currencySymbol + cost).replace("$balance$", currencySymbol + balance));
+                e.getPlayer().sendMessage(getMessage("messages.rename_home").replace("%cost%", currencySymbol + cost).replace("%old_name%", e.getOldHome()).replace("%new_name%", e.getNewHome()));
             }
             else
             {
-                if (econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
-                {
-                    e.getPlayer().sendMessage(getMessage("messages.rename_home").replace("$cost$", currencySymbol + cost).replace("$old_name$", e.getOldHome()).replace("$new_name$", e.getNewHome()));
-                }
+				e.setCancelled(true, getMessage("messages.not_enough_money").replace("%cost%", currencySymbol + cost).replace("%balance%", currencySymbol + balance));
             }
         }
     }
@@ -191,17 +180,14 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener, Command
         if (getConfig().getBoolean("use.teleporting_home"))
         {
             Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
-            Integer cost = getConfig().getInt("cost.teleport_home");
-            if (balance < cost)
+            Integer cost = e.getHome().getName().equals("Home") ? getConfig().getInt("cost.teleport_home") : getConfig().getInt("cost.teleport_home");
+            if (balance >= cost && econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
             {
-                e.setCancelled(true, getMessage("messages.not_enough_money").replace("$cost$", currencySymbol + cost).replace("$balance$", currencySymbol + balance));
+                e.getPlayer().sendMessage(getMessage("messages.teleport_home").replace("%cost%", currencySymbol + cost).replace("%name%", e.getHome().getName()));
             }
             else
             {
-                if (econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
-                {
-                    e.getPlayer().sendMessage(getMessage("messages.teleport_home").replace("$cost$", currencySymbol + cost).replace("$name$", e.getHome().getName()));
-                }
+				e.setCancelled(true, getMessage("messages.not_enough_money").replace("%cost%", currencySymbol + cost).replace("%balance%", currencySymbol + balance));
             }
         }
     }
@@ -212,16 +198,13 @@ public final class HomeSpawnCost extends JavaPlugin implements Listener, Command
         {
             Double balance = econ.getBalance(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()));
             Integer cost = getConfig().getInt("cost.teleport_spawn");
-            if (balance < cost)
+            if (balance >= cost && econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
             {
-                e.setCancelled(true, getMessage("messages.not_enough_money").replace("$cost$", currencySymbol + cost).replace("$balance$", currencySymbol + balance));
+				e.getPlayer().sendMessage(getMessage("messages.teleport_spawn").replace("%cost%", currencySymbol + cost));
             }
             else
             {
-                if (econ.withdrawPlayer(Bukkit.getOfflinePlayer(e.getPlayer().getUniqueId()), cost).transactionSuccess())
-                {
-                    e.getPlayer().sendMessage(getMessage("messages.teleport_spawn").replace("$cost$", currencySymbol + cost));
-                }
+                e.setCancelled(true, getMessage("messages.not_enough_money").replace("%cost%", currencySymbol + cost).replace("%balance%", currencySymbol + balance));
             }
         }
     }
