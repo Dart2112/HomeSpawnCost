@@ -1,21 +1,16 @@
-ConfigVersion: 1
-Charging:
-  Moving: true
-  Setting: true
-  Deleting: true
-  Renaming: true
-  Teleporting: true
-Costs:
-  MoveMainHome: 5
-  MoveCustomHome: 10
-  RenameHome: 100
-  SetMainHome: 20
-  SetCustomHome: 50
-  DeleteMainHome: 20
-  DeleteCustomHome: 50
-  TeleportMainHome: 2
-  TeleportCustomHome: 5
-Messages:
-  CurrencySymbol: "$"
-  NotEnoughMoney: "you need %COST% todo this, you currently have have %BALANCE%"
-  MoneySpent: "you spent %COST% to %ACTION%"
+ConfigVersion: 2
+
+use:
+  moving_home: true
+  setting_home: true
+  deleting_home: true
+  renaming_home: true
+  teleporting_home: true
+  teleporting_spawn: true
+cost:
+  move_home: 10
+  rename_home: 100
+  set_home: 20
+  delete_home: 50
+  teleport_home: 2
+  teleport_spawn: 10

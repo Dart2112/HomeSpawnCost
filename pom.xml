@@ -3,7 +3,7 @@
 
     <groupId>net.lapismc</groupId>
     <artifactId>HomeSpawnCost</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>HomeSpawnCost</name>
@@ -69,19 +69,19 @@
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
-            <version>1.6</version>
+            <version>1.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.lapismc</groupId>
             <artifactId>HomeSpawn</artifactId>
-            <version>3.0.4</version>
+            <version>3.1.13</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
